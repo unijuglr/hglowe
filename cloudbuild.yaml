@@ -31,7 +31,7 @@ steps:
       - '--region'
       - '${_REGION}'
       - '--port'
-      - '8080'
+      - '80'
 
 
 timeout: '1200s'
