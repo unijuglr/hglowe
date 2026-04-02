@@ -1,5 +1,3 @@
-logsBucket: gs://aib_build_logs
-
 substitutions:
   _SERVICE_NAME: 'hglowe-www'
   _REGION: 'us-central1'
