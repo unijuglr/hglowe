@@ -1,16 +1,15 @@
 substitutions:
   _SERVICE_NAME: 'hglowe-www'
   _REGION: 'us-central1'
+  _IMAGE: 'us-central1-docker.pkg.dev/$PROJECT_ID/containers/hglowe-www'
 
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/hglowe', '.']
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/containers/${_SERVICE_NAME}'
+    args: ['build', '-t', '${_IMAGE}', '.']
 
-  # Step 3: Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_IMAGE}']
+
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -18,18 +17,19 @@ steps:
       - 'deploy'
       - '${_SERVICE_NAME}'
       - '--image'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/containers/${_SERVICE_NAME}'
+      - '${_IMAGE}'
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
       - '--region'
       - '${_REGION}'
       - '--port'
-      - '8080'
+      - '80'
+
+images:
+  - '${_IMAGE}'
 
 timeout: '1200s'
 
-images:
-  - 'gcr.io/$PROJECT_ID/hglowe'
 options:
   logging: CLOUD_LOGGING_ONLY
