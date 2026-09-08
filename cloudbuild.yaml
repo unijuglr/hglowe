@@ -1,21 +1,29 @@
+# Builds the Next.js site and deploys it to Cloud Run.
+#
+# Runtime config comes from the substitutions below. Set the Supabase ones on the
+# Cloud Build trigger (or pass --substitutions to `gcloud builds submit`); the anon
+# key is a publishable key, so it is fine to keep it in the trigger.
 substitutions:
   _SERVICE_NAME: 'hglowe-www'
   _REGION: 'us-central1'
+  _SUPABASE_URL: 'https://lflapqpqefwtbnwybihu.supabase.co'
+  _SUPABASE_ANON_KEY: 'sb_publishable_ruyPGTS6_ZTnhoeFs8mD5A_SC__WYyG'
+  _ADMIN_EMAILS: 'hglowe1@gmail.com,goldband@gmail.com'
 
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
       - '-t'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/containers/${_SERVICE_NAME}'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/containers/${_SERVICE_NAME}:$SHORT_SHA'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/containers/${_SERVICE_NAME}:latest'
       - '-f'
       - './Dockerfile'
       - '.'
 
   - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/containers/${_SERVICE_NAME}'
+    args: ['push', '--all-tags', 'us-central1-docker.pkg.dev/$PROJECT_ID/containers/${_SERVICE_NAME}']
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
@@ -24,15 +32,20 @@ steps:
       - 'deploy'
       - '${_SERVICE_NAME}'
       - '--image'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/containers/${_SERVICE_NAME}'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/containers/${_SERVICE_NAME}:latest'
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
       - '--region'
       - '${_REGION}'
       - '--port'
-      - '80'
+      - '8080'
+      - '--set-env-vars'
+      # '^|^' switches the list delimiter to '|' so ADMIN_EMAILS can contain commas.
+      - '^|^GOOGLE_CLOUD_PROJECT=$PROJECT_ID|SUPABASE_URL=${_SUPABASE_URL}|SUPABASE_ANON_KEY=${_SUPABASE_ANON_KEY}|ADMIN_EMAILS=${_ADMIN_EMAILS}'
 
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/containers/${_SERVICE_NAME}:latest'
 
 timeout: '1200s'
 

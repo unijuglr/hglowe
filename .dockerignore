@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.idea
+static
+projects
+mirror.py
+PROOF_MB_083.md
+.env
+.env.local
+.env*.local
+*.md

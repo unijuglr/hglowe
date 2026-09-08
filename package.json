@@ -1,0 +1,34 @@
+{
+  "name": "hglowe",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@lexical/rich-text": "^0.48.0",
+    "@lexical/utils": "^0.48.0",
+    "@mdxeditor/editor": "^4.2.3",
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.116.0",
+    "firebase-admin": "^13.10.0",
+    "lexical": "^0.48.0",
+    "next": "^15.5.25",
+    "next-mdx-remote": "^5.0.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "remark-gfm": "^4.0.1",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^22.20.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "mdast-util-mdx-jsx": "^3.2.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,217 @@
+:root {
+  --bg: hsl(24.71, 36.96%, 81.96%);
+  --ink: #000;
+  --paper: #fff;
+  --muted: rgba(0, 0, 0, 0.6);
+  --heading: "Inter Tight", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --body: "Source Serif 4", "Minion Pro", Georgia, "Times New Roman", serif;
+  --max: 1200px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1.25rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+h1, h2, h3, h4 { font-family: var(--heading); font-weight: 600; letter-spacing: 0; line-height: 1.05; margin: 0; }
+
+/* Header */
+.site-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 2.25rem 4vw;
+  font-family: var(--heading);
+}
+.site-title { font-size: 1.75rem; font-weight: 600; text-decoration: none; }
+.site-header nav a { font-family: var(--body); text-decoration: none; }
+
+/* Sections */
+.site-section { padding: 6rem 4vw; }
+.site-section-inner { max-width: var(--max); margin: 0 auto; }
+
+.site-section[data-style="hero"] { padding-top: 14vh; padding-bottom: 14vh; }
+.site-section[data-style="hero"] h1 {
+  font-size: clamp(3rem, 9vw, 8.5rem);
+  text-align: right;
+  max-width: 14ch;
+  margin-left: auto;
+}
+
+.site-section[data-style="card"] .site-section-inner {
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 620px);
+  gap: 3rem;
+  align-items: start;
+}
+.label {
+  font-family: var(--heading);
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-align: right;
+  margin: 0;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--ink);
+}
+.card {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 2.5rem 2.75rem;
+  font-size: 1.5rem;
+  line-height: 1.55;
+}
+.card > p:first-child { margin-top: 0; text-indent: 3ch; }
+.card > p:last-child { margin-bottom: 0; }
+.card a { color: var(--paper); }
+
+/* Work list */
+.project {
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 720px);
+  gap: 3rem;
+  padding: 3.5rem 0;
+}
+.project-n { text-align: right; padding-top: 0.5rem; }
+.project-title { font-size: clamp(2rem, 4.5vw, 4rem); text-align: right; }
+.project-title a { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.08em; }
+.project-desc { margin-top: 2.5rem; text-align: right; }
+.project-desc p { margin: 0; }
+
+.site-section[data-style="note"] { padding: 2rem 4vw; }
+.site-section[data-style="note"] p { text-align: center; font-size: 1rem; margin: 0; }
+
+.site-section[data-style="contact"] h1 {
+  font-size: clamp(3rem, 9vw, 8.5rem);
+  text-align: center;
+  margin-bottom: 4rem;
+}
+.site-section[data-style="contact"] h1 a { text-decoration: none; }
+.columns { display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+.columns > * { flex: 1 1 200px; text-align: center; margin: 0; }
+
+/* Plain prose sections (custom sections default to this) */
+.site-section[data-style="plain"] .site-section-inner { max-width: 760px; }
+.site-section[data-style="plain"] h1 { font-size: clamp(2.25rem, 5vw, 4rem); margin-bottom: 1.5rem; }
+.site-section[data-style="plain"] h2 { font-size: clamp(1.75rem, 3.5vw, 2.75rem); margin: 2rem 0 1rem; }
+.site-section[data-style="plain"] h3 { font-size: 1.5rem; margin: 1.5rem 0 0.5rem; }
+.site-section[data-style="plain"] p { margin: 0 0 1.25rem; }
+.site-section[data-style="plain"] ul, .site-section[data-style="plain"] ol { padding-left: 1.5rem; margin: 0 0 1.25rem; }
+
+/* Formatting blocks available in every section */
+.align-left { text-align: left; }
+.align-center { text-align: center; }
+.align-center .label, .align-center .project-title, .align-center .project-desc, .align-center .project-n { text-align: center; }
+.align-right { text-align: right; }
+.align-right .label { margin-left: auto; }
+.spacer-sm { height: 1.5rem; } .spacer-md { height: 3rem; } .spacer-lg { height: 6rem; }
+.btn-link { display: inline-block; font-family: var(--heading); font-weight: 600; padding: 0.8rem 1.5rem; background: var(--ink); color: var(--paper); text-decoration: none; margin: 0.5rem 0; }
+.btn-link:hover { background: #333; }
+.card .btn-link { background: var(--paper); color: var(--ink); }
+.content-img { max-width: 100%; height: auto; display: block; margin: 1.5rem auto; }
+.site-section table { border-collapse: collapse; width: 100%; margin: 1.5rem 0; font-size: 1.05rem; }
+.site-section th, .site-section td { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.25); vertical-align: top; }
+.site-section th { font-family: var(--heading); font-weight: 600; }
+.site-section blockquote { margin: 1.5rem 0; padding-left: 1.25rem; border-left: 3px solid var(--ink); font-style: italic; }
+.site-section hr { border: 0; border-top: 1px solid var(--ink); margin: 3rem 0; }
+.site-section u { text-decoration: underline; text-underline-offset: 0.15em; }
+
+.mdx-error { color: #a00; font-family: var(--heading); }
+
+@media (max-width: 800px) {
+  body { font-size: 1.1rem; }
+  .site-section { padding: 4rem 6vw; }
+  .site-section[data-style="hero"] h1 { text-align: left; margin-left: 0; }
+  .site-section[data-style="card"] .site-section-inner,
+  .project { grid-template-columns: 1fr; gap: 1rem; }
+  .label, .project-n, .project-title, .project-desc { text-align: left; }
+  .card { padding: 1.75rem; font-size: 1.2rem; }
+}
+
+/* ---------- Admin ---------- */
+.admin { font-family: var(--heading); max-width: 1400px; margin: 0 auto; padding: 2rem 4vw 5rem; font-size: 1rem; line-height: 1.5; }
+.admin h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+.admin h2 { font-size: 1.25rem; margin: 2rem 0 0.75rem; }
+.admin p { margin: 0.5rem 0; }
+.admin-bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.admin-bar .who { color: var(--muted); font-size: 0.9rem; }
+.admin-bar form { display: inline; }
+.notice { padding: 0.75rem 1rem; border: 1px solid; margin: 1rem 0; font-size: 0.95rem; }
+.notice.ok { border-color: #1f7a3a; background: #e6f4ea; color: #1f4d2b; }
+.notice.warn { border-color: #a15c00; background: #fff3e0; color: #5d3600; }
+.notice.err { border-color: #a00; background: #fde8e8; color: #600; white-space: pre-wrap; }
+.notice code { font-size: 0.9em; }
+.admin table { width: 100%; border-collapse: collapse; background: var(--paper); }
+.admin th, .admin td { text-align: left; padding: 0.75rem; border-bottom: 1px solid #ddd; vertical-align: top; }
+.badge { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+.badge.firestore { background: #e6f4ea; color: #1f4d2b; }
+.badge.default { background: #eee; color: #444; }
+.btn { font: inherit; font-weight: 600; padding: 0.6rem 1rem; border: 1px solid var(--ink); background: var(--ink); color: var(--paper); cursor: pointer; text-decoration: none; display: inline-block; }
+.btn.secondary { background: transparent; color: var(--ink); }
+.btn.danger { background: transparent; color: #a00; border-color: #a00; }
+.btn[disabled] { opacity: 0.5; cursor: default; }
+.btn.small { padding: 0.3rem 0.6rem; font-size: 0.9rem; }
+.order-btns { display: flex; gap: 0.25rem; }
+.order-btns form { display: inline; }
+.add-form { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; background: var(--paper); padding: 1rem; }
+.add-form label { display: flex; flex-direction: column; gap: 0.25rem; font-weight: 600; font-size: 0.9rem; }
+.add-form input, .add-form select { font: inherit; padding: 0.5rem; border: 1px solid #bbb; min-width: 16rem; background: var(--paper); }
+.admin details.settings { margin: 0 0 1rem; }
+.admin details.settings summary { cursor: pointer; font-weight: 600; }
+.btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; margin: 1rem 0; }
+.editor-grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.5rem; }
+@media (max-width: 900px) { .editor-grid { grid-template-columns: 1fr; } }
+.editor textarea {
+  width: 100%; min-height: 60vh; font: 0.95rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  padding: 1rem; border: 1px solid #bbb; background: var(--paper); color: var(--ink); resize: vertical;
+}
+.preview { border: 1px dashed #999; background: var(--bg); overflow: auto; min-height: 60vh; }
+.preview .site-section { padding: 2rem; }
+.preview .site-section[data-style="hero"] h1,
+.preview .site-section[data-style="contact"] h1 { font-size: clamp(2rem, 4vw, 3.5rem); }
+.preview .project-title { font-size: 1.75rem; }
+.preview .card { font-size: 1.1rem; padding: 1.5rem; }
+.login { max-width: 420px; margin: 10vh auto; background: var(--paper); padding: 2rem; font-family: var(--heading); }
+.login label { display: block; font-weight: 600; margin: 1rem 0 0.25rem; }
+.login input { width: 100%; font: inherit; padding: 0.6rem; border: 1px solid #bbb; }
+.login .btn { margin-top: 1.25rem; width: 100%; }
+.help { font-size: 0.9rem; color: var(--muted); }
+.help code, .admin details code { background: #eee; padding: 0.05rem 0.3rem; }
+.admin details { margin-top: 1rem; }
+.admin details pre { background: #f6f6f6; padding: 1rem; overflow: auto; font-size: 0.85rem; }
+
+/* ---------- Visual editor (MDXEditor) ---------- */
+.mode-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+.segmented { display: inline-flex; border: 1px solid var(--ink); }
+.segmented button { font: inherit; font-weight: 600; padding: 0.4rem 0.8rem; background: transparent; border: 0; cursor: pointer; color: var(--ink); }
+.segmented button.on { background: var(--ink); color: var(--paper); }
+.mdxeditor.visual-editor { background: var(--paper); border: 1px solid #bbb; min-height: 60vh; --baseBg: #fff; font-family: var(--heading); }
+.visual-editor-content { min-height: 55vh; font-family: var(--body); font-size: 1.05rem; line-height: 1.6; padding: 1rem 1.25rem; }
+.visual-editor-content h1 { font-size: 2rem; } .visual-editor-content h2 { font-size: 1.5rem; } .visual-editor-content h3 { font-size: 1.25rem; }
+.visual-editor-loading { min-height: 60vh; border: 1px dashed #999; display: grid; place-items: center; color: var(--muted); }
+.mdx-toolbar-label { font-size: 0.85rem; color: var(--muted); padding: 0 0.25rem 0 0.5rem; align-self: center; }
+.jsx-block { border: 1px solid #d5d5d5; border-left: 4px solid var(--ink); background: #fafafa; margin: 0.75rem 0; padding: 0.5rem 0.75rem 0.5rem; position: relative; }
+.jsx-block .jsx-block { background: #fff; }
+.jsx-tag { display: inline-block; font-family: var(--heading); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.25rem; }
+.jsx-card { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.jsx-card .jsx-tag { color: rgba(255,255,255,0.6); }
+.jsx-block-head { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.4rem; }
+.jsx-field { font: inherit; font-family: var(--heading); padding: 0.3rem 0.5rem; border: 1px solid #ccc; background: #fff; }
+.jsx-field-n { width: 3.5rem; }
+.jsx-field-title { flex: 1 1 14rem; font-weight: 600; font-size: 1.05rem; }
+.jsx-field-href { flex: 2 1 16rem; font-size: 0.85rem; color: #333; }
+.visual-editor [role="toolbar"] { flex-wrap: wrap; row-gap: 0.25rem; overflow: visible; }
+.jsx-block [contenteditable] { color: var(--ink); background: #fff; padding: 0.5rem 0.75rem; min-height: 2.5rem; outline: none; }
+.jsx-block [contenteditable] p { margin: 0 0 0.5rem; }
+.segmented.small button { padding: 0.15rem 0.5rem; font-size: 0.8rem; }
+.jsx-align-center [contenteditable] { text-align: center; }
+.jsx-align-right [contenteditable] { text-align: right; }
+.jsx-spacer { padding-bottom: 0.5rem; }
+.jsx-spacer-sm { border-bottom-width: 0; } 
+.jsx-button [contenteditable] { display: inline-block; min-width: 10rem; background: var(--ink); color: var(--paper); font-family: var(--heading); font-weight: 600; padding: 0.6rem 1.2rem; }
+.jsx-button [contenteditable] p { margin: 0; }
+.visual-editor-content table { border-collapse: collapse; } .visual-editor-content th, .visual-editor-content td { border: 1px solid #ccc; padding: 0.3rem 0.5rem; }
+.visual-editor-content img { max-width: 100%; }

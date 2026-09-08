@@ -1,0 +1,6 @@
+# Project-level override of the org's "domain restricted sharing" policy so that
+# Cloud Run services in ai-bitz can be made public (granted to allUsers).
+name: projects/ai-bitz/policies/iam.allowedPolicyMemberDomains
+spec:
+  rules:
+    - allowAll: true
