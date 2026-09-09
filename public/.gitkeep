@@ -1,0 +1,1 @@
+# Static files served from the site root (e.g. /favicon.ico). Kept so the folder exists for the Docker build.
