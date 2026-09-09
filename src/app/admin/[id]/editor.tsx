@@ -211,6 +211,7 @@ export function Editor({ id, style, initialMdx, defaultMdx, source, canSave, ini
                       setVisualError(message);
                       setMode("source");
                     }}
+                    onNotice={setStatus}
                   />
                 </VisualBoundary>
               ) : null}

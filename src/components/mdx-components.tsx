@@ -1,4 +1,5 @@
 import type { ImgHTMLAttributes, ReactNode } from "react";
+import { youtubeEmbedUrl, youtubeStartSeconds, youtubeVideoId } from "@/lib/youtube";
 
 /** Small uppercase-ish label that sits beside a card ("Intro", "My CV"). */
 export function Label({ children }: { children: ReactNode }) {
@@ -71,9 +72,33 @@ export function Button({ href, children }: { href?: string; children: ReactNode 
   );
 }
 
+/** Embedded, playable YouTube video. `<YouTube url="https://youtu.be/…" />` */
+export function YouTube({ url = "", title }: { url?: string; title?: string }) {
+  const id = youtubeVideoId(url);
+  if (!id) {
+    return (
+      <p className="video-embed-missing">
+        {url ? "That doesn’t look like a YouTube link." : "No YouTube link yet."}
+      </p>
+    );
+  }
+  return (
+    <div className="video-embed">
+      <iframe
+        src={youtubeEmbedUrl(id, youtubeStartSeconds(url))}
+        title={title || "YouTube video"}
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerPolicy="strict-origin-when-cross-origin"
+        allowFullScreen
+      />
+    </div>
+  );
+}
+
 function Img(props: ImgHTMLAttributes<HTMLImageElement>) {
   // eslint-disable-next-line @next/next/no-img-element
   return <img {...props} alt={props.alt ?? ""} className="content-img" loading="lazy" />;
 }
 
-export const mdxComponents = { Label, Card, Project, Columns, Align, Spacer, Button, img: Img };
+export const mdxComponents = { Label, Card, Project, Columns, Align, Spacer, Button, YouTube, img: Img };

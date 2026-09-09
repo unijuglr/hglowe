@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "env -u GOOGLE_APPLICATION_CREDENTIALS next dev",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit"

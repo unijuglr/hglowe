@@ -48,6 +48,9 @@ h1, h2, h3, h4 { font-family: var(--heading); font-weight: 600; letter-spacing: 
   gap: 3rem;
   align-items: start;
 }
+/* In the label + card grid, anything that isn't the label or the card (a video, an image,
+   a paragraph) spans both columns instead of being squeezed into the label column. */
+.site-section[data-style="card"] .site-section-inner > :not(.label):not(.card) { grid-column: 1 / -1; }
 .label {
   font-family: var(--heading);
   font-size: 1.125rem;
@@ -112,6 +115,9 @@ h1, h2, h3, h4 { font-family: var(--heading); font-weight: 600; letter-spacing: 
 .btn-link:hover { background: #333; }
 .card .btn-link { background: var(--paper); color: var(--ink); }
 .content-img { max-width: 100%; height: auto; display: block; margin: 1.5rem auto; }
+.video-embed { position: relative; width: 100%; max-width: 960px; aspect-ratio: 16 / 9; margin: 1.5rem auto; background: #000; }
+.video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video-embed-missing { color: var(--muted); font-style: italic; }
 .site-section table { border-collapse: collapse; width: 100%; margin: 1.5rem 0; font-size: 1.05rem; }
 .site-section th, .site-section td { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.25); vertical-align: top; }
 .site-section th { font-family: var(--heading); font-weight: 600; }
@@ -195,6 +201,10 @@ h1, h2, h3, h4 { font-family: var(--heading); font-weight: 600; letter-spacing: 
 .mdx-toolbar-label { font-size: 0.85rem; color: var(--muted); padding: 0 0.25rem 0 0.5rem; align-self: center; }
 .jsx-block { border: 1px solid #d5d5d5; border-left: 4px solid var(--ink); background: #fafafa; margin: 0.75rem 0; padding: 0.5rem 0.75rem 0.5rem; position: relative; }
 .jsx-block .jsx-block { background: #fff; }
+.jsx-youtube-preview { position: relative; width: 100%; max-width: 480px; aspect-ratio: 16 / 9; background: #000; overflow: hidden; }
+.jsx-youtube-preview img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.85; }
+.jsx-youtube-play { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 2.5rem; text-shadow: 0 2px 8px rgba(0,0,0,0.6); pointer-events: none; }
+.jsx-youtube-hint { margin: 0; color: var(--muted); font-size: 0.9rem; }
 .jsx-tag { display: inline-block; font-family: var(--heading); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.25rem; }
 .jsx-card { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .jsx-card .jsx-tag { color: rgba(255,255,255,0.6); }

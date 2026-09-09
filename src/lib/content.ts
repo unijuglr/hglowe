@@ -70,7 +70,7 @@ export async function getLayout(): Promise<Layout> {
     if (!sections) return { sections: DEFAULT_SECTIONS, source: "default" };
     return { sections, source: "firestore" };
   } catch (err) {
-    console.error("[content] Firestore layout read failed:", err);
+    console.warn("[content] Firestore layout read failed:", errorMessage(err));
     return { sections: DEFAULT_SECTIONS, source: "default", error: `Firestore read failed: ${errorMessage(err)}` };
   }
 }
@@ -167,7 +167,7 @@ export async function getSection(meta: SectionMeta): Promise<SectionContent> {
       updatedBy: data.updatedBy,
     };
   } catch (err) {
-    console.error(`[content] Firestore read failed for "${meta.id}":`, err);
+    console.warn(`[content] Firestore read failed for "${meta.id}":`, errorMessage(err));
     return { ...base, error: `Firestore read failed: ${errorMessage(err)}` };
   }
 }

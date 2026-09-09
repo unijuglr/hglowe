@@ -54,6 +54,7 @@ import {
 import type { MdxJsxAttribute, MdxJsxFlowElement } from "mdast-util-mdx-jsx";
 import { useRef, useState } from "react";
 import { alignmentPlugin } from "./alignment-plugin";
+import { youtubeThumbnailUrl, youtubeVideoId } from "@/lib/youtube";
 
 // ---------- Custom block editors ----------
 
@@ -236,6 +237,29 @@ function ButtonEditor({ mdastNode }: JsxEditorProps) {
   );
 }
 
+/** YouTube block: URL field plus a thumbnail so the author can see which video it is. */
+function YouTubeEditor({ mdastNode }: JsxEditorProps) {
+  const node = mdastNode as MdxJsxFlowElement;
+  const id = youtubeVideoId(attrValue(node, "url"));
+  return (
+    <div className="jsx-block jsx-youtube">
+      <div className="jsx-block-head">
+        <span className="jsx-tag">YouTube</span>
+        <PropField node={node} name="url" placeholder="Paste a YouTube link (https://youtu.be/…)" className="jsx-field jsx-field-href" />
+      </div>
+      {id ? (
+        <div className="jsx-youtube-preview">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={youtubeThumbnailUrl(id)} alt="" />
+          <span className="jsx-youtube-play" aria-hidden="true">▶</span>
+        </div>
+      ) : (
+        <p className="jsx-youtube-hint">The video will play here on the live page once a link is pasted above.</p>
+      )}
+    </div>
+  );
+}
+
 /**
  * Tells MDXEditor about the custom tags used in section content so it can
  * show them as editable blocks instead of refusing to load the document.
@@ -259,6 +283,7 @@ const descriptors: JsxComponentDescriptor[] = [
   { name: "Align", kind: "flow", props: [{ name: "to", type: "string" }], hasChildren: true, Editor: AlignEditor },
   { name: "Spacer", kind: "flow", props: [{ name: "size", type: "string" }], hasChildren: false, Editor: SpacerEditor },
   { name: "Button", kind: "flow", props: [{ name: "href", type: "string" }], hasChildren: true, Editor: ButtonEditor },
+  { name: "YouTube", kind: "flow", props: [{ name: "url", type: "string", required: true }], hasChildren: false, Editor: YouTubeEditor },
 ];
 
 function paragraph(text: string) {
@@ -424,6 +449,10 @@ function InsertBlock() {
       label: "Spacer",
       insert: () => insertJsx({ kind: "flow", name: "Spacer", props: { size: "md" }, children: [] }),
     },
+    {
+      label: "YouTube",
+      insert: () => insertJsx({ kind: "flow", name: "YouTube", props: { url: "" }, children: [] }),
+    },
   ];
   return (
     <>
@@ -437,14 +466,40 @@ function InsertBlock() {
   );
 }
 
+/** Send a picked/pasted/dropped image to the server, which stores it and returns its public URL. */
+async function uploadImageFile(file: File): Promise<string> {
+  const body = new FormData();
+  body.append("file", file);
+  let response: Response;
+  try {
+    response = await fetch("/admin/upload", { method: "POST", body });
+  } catch {
+    throw new Error("Upload failed: could not reach the server.");
+  }
+  const data = (await response.json().catch(() => ({}))) as { url?: string; error?: string };
+  if (!response.ok || !data.url) throw new Error(data.error ?? `Upload failed (${response.status}).`);
+  return data.url;
+}
+
 interface Props {
   markdown: string;
   onChange: (markdown: string) => void;
   onError: (message: string) => void;
+  /** Called when an image upload fails; the editor itself shows nothing. */
+  onNotice: (notice: { kind: "ok" | "err"; text: string }) => void;
 }
 
-export default function VisualEditor({ markdown, onChange, onError }: Props) {
+export default function VisualEditor({ markdown, onChange, onError, onNotice }: Props) {
   const ref = useRef<MDXEditorMethods>(null);
+  // MDXEditor swallows upload-handler rejections, so report them ourselves.
+  const upload = async (file: File) => {
+    try {
+      return await uploadImageFile(file);
+    } catch (err) {
+      onNotice({ kind: "err", text: err instanceof Error ? err.message : String(err) });
+      throw err;
+    }
+  };
   return (
     <MDXEditor
       ref={ref}
@@ -465,8 +520,9 @@ export default function VisualEditor({ markdown, onChange, onError }: Props) {
         linkPlugin(),
         linkDialogPlugin(),
         tablePlugin(),
-        // No upload handler: the image dialog takes a URL. Uploads would need a storage bucket.
-        imagePlugin(),
+        // The image dialog offers "Upload" (stored in Supabase Storage) as well as a URL;
+        // pasting or dropping an image file into the document uploads it too.
+        imagePlugin({ imageUploadHandler: upload }),
         jsxPlugin({ jsxComponentDescriptors: descriptors }),
         alignmentPlugin(),
         markdownShortcutPlugin(),

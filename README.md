@@ -32,10 +32,21 @@ editor re-serialises the MDX, so formatting may be normalised slightly. If the
 visual editor can't open a document it drops to Source with the error shown.
 
 MDX is Markdown (with GFM tables and strikethrough) plus a few custom tags:
-`<Label>`, `<Card>`, `<Project>`, `<Columns>`, `<Align to="center">`, `<Spacer size="lg" />`
-and `<Button href>`, all defined in `src/components/mdx-components.tsx`. The visual
-editor has toolbar buttons for alignment, images (by URL), tables, and rules, and an
+`<Label>`, `<Card>`, `<Project>`, `<Columns>`, `<Align to="center">`, `<Spacer size="lg" />`,
+`<Button href>` and `<YouTube url="https://youtu.be/…" />`, all defined in
+`src/components/mdx-components.tsx`. The YouTube block accepts any watch, share, shorts or
+embed link (a `t=` start time is honoured) and renders a playable, privacy-enhanced embed. The visual
+editor has toolbar buttons for alignment, images, tables, and rules, and an
 Insert menu for the custom blocks.
+
+**Images.** The image button offers an upload from your device or a URL; pasting or
+dropping an image file into the editor uploads it too. Uploads go to the Supabase
+Storage bucket `hglowe-images` (public read, 10 MB limit, image types only) via
+`POST /admin/upload`, and the MDX just holds the resulting public URL. Writes to the
+bucket are limited by a storage policy (`public.hglowe_is_editor()`, migration
+`hglowe_images_bucket`) to the same editor emails as `ADMIN_EMAILS`; if you change the
+allow-list, update that function too. Uploads use the signed-in editor's Supabase session,
+so they don't work under the `LOCAL_ADMIN_EMAIL` shortcut.
 
 Alignment works like a word processor: the buttons align the paragraph(s) the cursor is
 in; with part of a paragraph selected, that part is split out into its own paragraph
@@ -55,8 +66,10 @@ npm run dev                  # http://localhost:3000
 
 - To use `/admin` locally **without** Supabase, set `LOCAL_ADMIN_EMAIL=goldband@gmail.com`
   in `.env.local`. This only works under `next dev`, never in a production build.
-- To save to Firestore locally, run `gcloud auth application-default login` and set
-  `GOOGLE_CLOUD_PROJECT` in `.env.local`.
+- To save to Firestore locally, run `gcloud auth application-default login` (with the
+  Google account that owns the GCP project) and set `GOOGLE_CLOUD_PROJECT` in `.env.local`.
+  `npm run dev` deliberately unsets `GOOGLE_APPLICATION_CREDENTIALS` so a service-account
+  key from another project in your shell can't hijack Firestore auth.
 - Or point at the emulator instead: `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 GOOGLE_CLOUD_PROJECT=demo-hglowe`.
 
 ## Auth (Supabase)
