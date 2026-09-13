@@ -19,8 +19,9 @@ fi
 
 SHORT_SHA="$(git rev-parse --short HEAD 2>/dev/null || echo manual)"
 
+# `^;^` switches gcloud's list delimiter to ";" so the comma-separated admin e-mail list survives.
 gcloud builds submit --project "$PROJECT_ID" --config cloudbuild.yaml \
-  --substitutions="SHORT_SHA=${SHORT_SHA},_SUPABASE_URL=${SUPABASE_URL},_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY},_ADMIN_EMAILS=${ADMIN_EMAILS}" .
+  --substitutions="^;^SHORT_SHA=${SHORT_SHA};_SUPABASE_URL=${SUPABASE_URL};_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY};_ADMIN_EMAILS=${ADMIN_EMAILS}" .
 
 echo
 gcloud run services describe hglowe-www --project "$PROJECT_ID" --region us-central1 --format='value(status.url)'
