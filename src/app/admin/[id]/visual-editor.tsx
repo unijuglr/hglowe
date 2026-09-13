@@ -10,6 +10,7 @@ import {
   Button,
   CreateLink,
   headingsPlugin,
+  ImageNode,
   imagePlugin,
   insertJsx$,
   InsertImage,
@@ -22,6 +23,7 @@ import {
   ListsToggle,
   markdownShortcutPlugin,
   MDXEditor,
+  NESTED_EDITOR_UPDATED_COMMAND,
   quotePlugin,
   Separator,
   StrikeThroughSupSubToggles,
@@ -52,7 +54,7 @@ import {
   type RangeSelection,
 } from "lexical";
 import type { MdxJsxAttribute, MdxJsxFlowElement } from "mdast-util-mdx-jsx";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { alignmentPlugin } from "./alignment-plugin";
 import { youtubeThumbnailUrl, youtubeVideoId } from "@/lib/youtube";
 
@@ -260,6 +262,11 @@ function YouTubeEditor({ mdastNode }: JsxEditorProps) {
   );
 }
 
+/** Only reached for an `<img>` with no src, which the image plugin declines to import. */
+function ImgFallbackEditor() {
+  return <span className="jsx-tag">img</span>;
+}
+
 /**
  * Tells MDXEditor about the custom tags used in section content so it can
  * show them as editable blocks instead of refusing to load the document.
@@ -284,6 +291,12 @@ const descriptors: JsxComponentDescriptor[] = [
   { name: "Spacer", kind: "flow", props: [{ name: "size", type: "string" }], hasChildren: false, Editor: SpacerEditor },
   { name: "Button", kind: "flow", props: [{ name: "href", type: "string" }], hasChildren: true, Editor: ButtonEditor },
   { name: "YouTube", kind: "flow", props: [{ name: "url", type: "string", required: true }], hasChildren: false, Editor: YouTubeEditor },
+  // Resized images are saved as `<img height width src />`. Inside a Project/Card the image
+  // plugin still edits them as images, but MDXEditor's exporter walks the block's raw JSX tree
+  // and (as of 4.2.5) does not treat `img` as a plain HTML tag, so without a descriptor every
+  // export throws "Component img is used but not imported" and nothing saves. Registering it
+  // here satisfies that check; the higher-priority image visitor still claims the node on import.
+  { name: "img", kind: "text", props: [{ name: "src", type: "string" }], hasChildren: false, Editor: ImgFallbackEditor },
 ];
 
 function paragraph(text: string) {
@@ -466,6 +479,33 @@ function InsertBlock() {
   );
 }
 
+/**
+ * Push image changes made inside a block (Project, Card, …) up into the document straight away.
+ *
+ * Each block body is a nested editor, and MDXEditor only copies a nested editor's content into
+ * the saved markdown when that editor loses focus. The image dialog, paste/drop uploads and the
+ * image's own delete/resize controls never focus it, so an image added there showed up on screen
+ * but was missing from the markdown that gets saved (and from the preview) until the author
+ * happened to click into that block and away again. Watching the block's image nodes and asking
+ * the nested editor to export whenever one is added, removed or changed closes that gap.
+ */
+function SyncNestedImageChanges() {
+  const [activeEditor, rootEditor] = useCellValues(activeEditor$, rootEditor$);
+  useEffect(() => {
+    if (!activeEditor || activeEditor === rootEditor) return;
+    const editor = activeEditor;
+    return editor.registerMutationListener(
+      ImageNode,
+      () => {
+        // Runs during Lexical's commit; defer so the export sees the finished state.
+        setTimeout(() => editor.dispatchCommand(NESTED_EDITOR_UPDATED_COMMAND, undefined), 0);
+      },
+      { skipInitialization: true },
+    );
+  }, [activeEditor, rootEditor]);
+  return null;
+}
+
 /** Send a picked/pasted/dropped image to the server, which stores it and returns its public URL. */
 async function uploadImageFile(file: File): Promise<string> {
   const body = new FormData();
@@ -544,6 +584,7 @@ export default function VisualEditor({ markdown, onChange, onError, onNotice }: 
               <InsertThematicBreak />
               <Separator />
               <InsertBlock />
+              <SyncNestedImageChanges />
             </>
           ),
         }),
